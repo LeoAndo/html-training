@@ -1,0 +1,7 @@
+.shadowBox {
+    /* box-shadow : [inset] (X方向) (Y方向) (ぼかし距離) (影の色 RGB) */
+    box-shadow: 8px 8px 10px rgb(163, 82, 82);
+    width: 300px;
+    padding: 12px;
+    background: aqua;
+}
