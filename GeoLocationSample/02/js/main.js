@@ -1,7 +1,8 @@
 var resultText;
 var appLocationHelper;
 
-window.onload = function () {
+window.addEventListener("load", init, false);
+function init() {
     console.log("loaded!");
     resultText = document.getElementById("resultText");
     appLocationHelper = new AppLocationHelper();
@@ -11,7 +12,6 @@ window.onload = function () {
         resultText.innerHTML = "Geolocation is not supported by this browser.";
     }
 }
-
 // get Current Location.
 function getCurrentLocation() {
     appLocationHelper.getCurrentPosition();

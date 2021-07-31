@@ -1,6 +1,8 @@
 var video;
 
-window.onload = function () {
+window.addEventListener("load", init, false);
+
+function init() {
     console.log("window.onload");
     video = document.getElementById("video");
 }

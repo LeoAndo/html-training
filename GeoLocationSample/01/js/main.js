@@ -1,10 +1,9 @@
 var resultText;
-
-window.onload = function () {
+window.addEventListener("load", init, false);
+function init() {
     resultText = document.getElementById("resultText");
     isGeoLocationSupported();
 }
-
 // check geo location is already supported.
 function isGeoLocationSupported() {
     if (navigator.geolocation) {

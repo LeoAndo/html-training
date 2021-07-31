@@ -1,9 +1,5 @@
 var id, target, options;
-
-window.onload = function () {
-    console.log("loaded!");
-    startWatchPosition();
-}
+window.addEventListener("load", startWatchPosition, false);
 
 function startWatchPosition() {
     if (isGeoLocationSupported()) {
