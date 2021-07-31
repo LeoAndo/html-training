@@ -4,14 +4,14 @@
 <head>
     <meta charset="utf-8">
     <script src="js/main.js"></script>
-    <script src="../common/js/app-location-helper.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
 
 <body>
-    <header>geoLocation APIを使って現在地を取得するプログラム</header>
+    <header>geoLocation APIを使って現在地を取得して別タブでgoogleMapを表示するプログラム</header>
     <div id="resultText"></div>
-    <button id="getLocation" onclick="getCurrentLocation()">現在地を取得</button>
+    <button onclick="getCurrentLocation()">get Current Location</button>
+    <button onclick="openGoogleMap()">open Google Map</button>
 </body>
 
 </html>
