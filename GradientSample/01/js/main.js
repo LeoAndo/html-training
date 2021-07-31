@@ -1,6 +1,4 @@
-document.addEventListener("DOMContentLoaded", function (event) {
-    createLinearGradient();
-}, false);
+window.addEventListener("load", createLinearGradient, false);
 
 // 線型グラデーションの作成.
 function createLinearGradient() {

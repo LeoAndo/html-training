@@ -1,6 +1,4 @@
-window.addEventListener("load", function () {
-    createRadialGradient();
-}, false);
+window.addEventListener("load", createRadialGradient, false);
 
 // 円形グラデーションの作成
 function createRadialGradient() {

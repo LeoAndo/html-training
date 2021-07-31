@@ -26,19 +26,20 @@ class AppLocationHelper {
         console.log("getCurrentLocation!");
         if (this.isGeoLocationSupported()) {
             console.log(this.options);
-            navigator.geolocation.getCurrentPosition(this.success, this.error, this.options);
+            navigator.geolocation.getCurrentPosition(this.onSuccess, this.onError, this.options);
         }
     }
 
-    success(position) {
+    onSuccess(position) {
         var latitude = position.coords.latitude;
         var longitude = position.coords.longitude;
         console.log("Latitude: " + latitude + " Longitude: " + longitude);
-        // return "Latitude: " + latitude + " Longitude: " + longitude;
+        return [latitude, longitude];
     }
 
-    error(err) {
+    onError(err) {
         console.warn(`ERROR(${err.code}): ${err.message}`);
         // return `ERROR(${err.code}): ${err.message}`;
+        return err.message;
     }
 }

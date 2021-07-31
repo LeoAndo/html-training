@@ -2,7 +2,8 @@ var textarea;
 const ITEM_MEMO_KEY = "memo";
 
 // 初期表示時にメモを読み込む
-window.onload = function () {
+window.addEventListener("load", init, false);
+function init() {
     console.log("onload");
     textarea = document.getElementById("textarea");
     textarea.focus();

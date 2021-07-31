@@ -1,6 +1,4 @@
-window.addEventListener("load", function () {
-    translateCanvas();
-}, false);
+window.addEventListener("load", translateCanvas, false);
 
 // translate Canvas.
 function translateCanvas() {
