@@ -7,14 +7,14 @@
     <title>Check Canvas API</title>
     <script src="../modernizr-custom.js"></script>
     <script>
-        function checkSupportedCanvas() {
+        function isSupportsCanvas() {
             if (Modernizr.canvas) {
                 alert("supported: canvas")
             } else {
                 alert("not-supported: canvas")
             }
         }
-        function checkSupportedCanvasText() {
+        function isSupportsCanvasText() {
             if (Modernizr.canvastext) {
                 alert("supported: canvas text")
             } else {
@@ -25,8 +25,8 @@
 </head>
 
 <body>
-<button onclick="checkSupportedCanvas()">check Supported Canvas API</button>
-<button onclick="checkSupportedCanvasText()">check Supported Canvas Text API</button>
+<button onclick="isSupportsCanvas()">check Supported Canvas API</button>
+<button onclick="isSupportsCanvasText()">check Supported Canvas Text API</button>
 </body>
 
 </html>

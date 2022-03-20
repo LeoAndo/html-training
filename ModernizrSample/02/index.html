@@ -7,7 +7,7 @@
     <title>Check Video API</title>
     <script src="../modernizr-custom.js"></script>
     <script>
-        function checkSupportedVideo() {
+        function isSupportsVideo() {
             if (Modernizr.video) {
                 alert("supported: video")
             } else {
@@ -15,7 +15,7 @@
             }
         }
 
-        function checkSupportedWebM() {
+        function isSupportsWebM() {
             if (Modernizr.video && Modernizr.video.webm) {
                     alert("supported: video format webm")
             } else {
@@ -26,8 +26,8 @@
 </head>
 
 <body>
-<button onclick="checkSupportedVideo()">check Supported Video API</button>
-<button onclick="checkSupportedWebM()">check Supported  format Webm</button>
+<button onclick="isSupportsVideo()">check Supported Video API</button>
+<button onclick="isSupportsWebM()">check Supported  format Webm</button>
 </body>
 
 </html>
