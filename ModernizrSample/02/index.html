@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Check Video API</title>
+    <script src="../modernizr-custom.js"></script>
+    <script>
+        function checkSupportedVideo() {
+            if (Modernizr.video) {
+                alert("supported: video")
+            } else {
+                alert("not-supported: video")
+            }
+        }
+
+        function checkSupportedWebM() {
+            if (Modernizr.video && Modernizr.video.webm) {
+                    alert("supported: video format webm")
+            } else {
+                alert("not-supported: video format webm")
+            }
+        }
+    </script>
+</head>
+
+<body>
+<button onclick="checkSupportedVideo()">check Supported Video API</button>
+<button onclick="checkSupportedWebM()">check Supported  format Webm</button>
+</body>
+
+</html>
