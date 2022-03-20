@@ -14,11 +14,19 @@
                 alert("not-supported: canvas")
             }
         }
+        function checkSupportedCanvasText() {
+            if (Modernizr.canvastext) {
+                alert("supported: canvas text")
+            } else {
+                alert("not-supported: canvas text")
+            }
+        }
     </script>
 </head>
 
 <body>
 <button onclick="checkSupportedCanvas()">check Supported Canvas API</button>
+<button onclick="checkSupportedCanvasText()">check Supported Canvas Text API</button>
 </body>
 
 </html>
