@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+  <meta name="viewport" content="width=320, user-scalable=no" />
+  <script type="text/javascript">
+    function $(id) { return document.getElementById(id); }
+    window.onload = function() {
+      document.body.onmousedown = showInfo;
+      document.body.onmousemove = showInfo;
+      document.body.onmouseup   = showInfo;
+    };
+    function showInfo(event) {
+      var s = "*type = " + event.type;
+      s += " xy=" + event.x + "," + event.y;
+      s += " offsetXY=" + event.offsetX + "," + event.offsetY;
+      s += " target=" + event.target.nodeName;
+      $("info").value = s + "\n" + $("info").value;
+    }
+  </script>
+</head><body>
+  <h1>マウスイベントのテスト</h1>
+  <textarea id="info" rows="30" cols="80"></textarea>
+</body></html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<h1>TODO Memo2</h1>
+<div id="new_div">
+  todo: <input id="new_txt" type="text"   value="" size="40"/>
+  <input id="add_btn" type="button" value="追加" />
+</div>
+<div id="todo_div"></div>
+<!-- for Android 1.6 -->
+<script type="text/javascript" src="gear5-0.3.js"></script>
+<!-- mchain ライブラリの取り込み -->
+<script type="text/javascript" src="mchain.js"></script>
+<script type="text/javascript">
+  // ウィンドウが表示された時のイベント
+  window.onload = function() {
+    // Web Database APIが使えるかテスト
+    if (window.openDatabase == undefined) {
+      alert("Web Database 未対応の端末です!");
+      return;
+    }
+    // データベースの初期化
+    mchain
+      .openDatabase("todo.db")
+      .transaction()
+      .createTable("todo_tbl", {
+         todo_id : "INTEGER PRIMARY KEY",
+         body    : "TEXT",
+         ctime   : "INTEGER"
+         })
+      .commit(showItems, showItems);
+  }
+  // TODOを表示する
+  function showItems() {
+    mchain.transaction()
+          .select("todo_tbl", {}, showItems_okHandler)
+          .commit();
+  }
+ function showItems_okHandler(tr, rs) {
+    var html = "<table>";
+    for (var i = 0; i < rs.rows.length; i++) {
+      var row = rs.rows.item(i);
+      var todo_id = row.todo_id;
+      var body    = row.body;
+      html += "<tr><td style='width:250px'>" + body + "</td><td>";
+      html += "<button onclick='rmTodo("+todo_id+")'>削除</button>";
+      html += "</tr>\n";
+    }
+    html += "</table>";
+    $("todo_div").innerHTML = html;
+  }
+  // [追加]ボタンのイベント
+  $("add_btn").onclick = function() {
+    mchain.transaction()
+          .insert("todo_tbl",{"body":$("new_txt").value},showItems)
+          .commit();
+    $("new_txt").value = "";
+  };
+  // [削除]ボタンのイベント
+  function rmTodo(todo_id) {
+    mchain.transaction()
+          .deleteRow("todo_tbl", {"todo_id":todo_id},showItems)
+          .commit();
+  };
+</script>
+</body></html>

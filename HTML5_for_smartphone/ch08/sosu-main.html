@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<div id="result">計算中</div>
+<script type="text/javascript">
+  // (*1) Worker の作成
+  var worker = new Worker("sosu-worker.js");
+  // (*2) Worker からのメッセージを受け取るようにイベントを設定
+  worker.onmessage = function (event) {
+    // (*3) メッセージが届いたら画面を更新
+    document.getElementById("result").innerHTML = event.data;
+  };
+</script>
+</body></html>

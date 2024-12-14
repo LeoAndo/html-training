@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+     content="width=320, user-scalable=yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>体重日記</title>
+  <style>
+    *    { margin:0px; }
+    body { background-image: url(back.png); }
+    h1 {
+      background: -webkit-gradient(
+                      linear,left top,left bottom,
+                      from(#AAB7CA), to(#7189A4));
+      color: white;
+      padding: 6px;
+      font-size: 24px; font-weight: bold;
+      text-align: center;
+    }
+    h2 {
+      margin: 4px 0 4px 14px; padding: 3px;
+      color: #7189A4;
+      font-size: 16px; font-weight: normal;
+      text-shadow: 2px 2px 4px white;
+    }
+    div.input_bk {
+      background-color: white;
+      color: black;
+      padding: 6px;
+      margin: 6px;
+       -webkit-border-radius: 6px;
+      clear: both;
+    }
+    div.cap {
+      float: left;
+      width: 120px;
+    }
+    input {
+      font-size: 20px;
+      width: 130px;
+    }
+    .submit_button { text-align: center;  }
+    button {
+      font-size: 20px;
+      margin: 8px; padding: 4px;
+      width: 296px;
+      -webkit-border-radius: 12px;
+      background: -webkit-gradient(
+                      linear,left top,left bottom,
+                      from(#EFF1F1), to(#C4C8CA));
+    }
+    div.next_bk {
+      text-align: right;
+      background-color: white;
+      color: #999999;
+      padding: 6px; margin: 6px;
+      font-weight: bold; font-size: 18px;
+      -webkit-border-radius: 6px;
+      clear: both;
+    }
+    div.next_cap {
+      float: left; color: black;
+      font-weight: normal; font-size: 16px;
+    }
+    div.bline {
+      border-bottom: solid 1px #cccccc;
+    }
+  </style>
+  <!-- ライブラリの取り込み -->
+  <script src="gear5-0.3.js" type="text/javascript"></script>
+  <script src="mchain.js" type="text/javascript"></script>
+</head><body>
+  <h1 id="title">体重日記</h1>
+  <div id="history">
+    <div id="input_btn" class="next_bk">
+      <div class="next_cap">体重の入力</div>&gt;
+    </div>
+    <h2>BMI(肥満度測定)</h2>
+    <div id="bmi_div" class="input_bk">
+    </div>
+    <h2>体重の経過</h2>
+    <div id="info_div" class="input_bk">
+    </div>
+  </div>
+  <div id="form">
+    <h2>体重の入力</h2>
+    <div class="input_bk">
+      <label><div class="cap">入力日は？</div>
+        <input id="date_txt" type="text" required />
+      </label>
+    </div>
+    <div class="input_bk">
+      <label><div class="cap">体重(kg)</div>
+        <input id="weight_txt" type="number" required />
+      </label>
+    </div>
+    <div class="input_bk">
+      <label><div class="cap">身長(cm)</div>
+        <input id="height_txt" type="number" required />
+      </label>
+    </div>
+    <div class="submit_button">
+      <button id="save_btn">保存</button>
+      <button id="cancel_btn">キャンセル</button>
+    </div>
+  </div>
+  <script type="text/javascript">
+    function $ (id) { return document.getElementById(id); }
+    var KEY_HEIGHT = 'height.value';
+    // ページが表示されたときのイベントを設定
+    window.onload = function() {
+      // データベースの初期化
+      initDatabase();
+      $("save_btn").onclick = saveWeight;
+      $("cancel_btn").onclick = function() { showHistorySection(); };
+      $("input_btn").onclick = function(){ showFormSection(); };
+    };
+    function initDatabase() {
+      mchain
+        .openDatabase("weight.db")
+        .createTable('logs', {
+          log_id : "integer primary key",
+          weight : "integer",
+          year   : "integer",
+          month  : "integer",
+          date   : "integer"
+        })
+        .commit(detectSection, detectSection);
+    }
+    function detectSection() {
+      // データ未入力か調べる
+      mchain.transaction().select("logs",{},
+        function(trans, rs) {
+          if (rs.rows.length == 0) {
+            showFormSection();
+          } else {
+            showHistorySection();
+          }
+        }
+      ).commit();
+    }
+    // 表示セクションの切り替え
+    function showFormSection() {
+      $("form").style.display    = 'block';
+      $("history").style.display = 'none';
+      setDefaultValue();
+    }
+    function showHistorySection() {
+      $("form").style.display    = 'none';
+      $("history").style.display = 'block';
+      setTimeout(showHistoryData, 1); // 少し遅らせて表示
+    }
+    // 初期値を設定
+    function setDefaultValue() {
+      // 今日の日付を設定
+      var t = new Date();
+      $("date_txt").value = t.getFullYear() + "/" + 
+                   (t.getMonth()+1) + "/" + t.getDate();
+      // 前回の身長/体重を調べて設定
+      var h = localStorage.getItem(KEY_HEIGHT);
+      if (h == null) h = 150; // 適当な値を入れる
+      $("height_txt").value = h;
+      mchain.transaction().executeSql(
+        "SELECT * FROM logs ORDER BY log_id DESC",[],
+        function(trans, rs){
+          var w = 70;
+          if (rs.rows.length > 0) {
+            var row = rs.rows.item(0);
+            w = row.weight;
+          }
+          $("weight_txt").value = w;
+        }
+      ).commit();
+    }
+    // 身長/体重の記録を保存
+    function saveWeight() {
+      // 値を取得する
+      var height = parseFloat($('height_txt').value);
+      var weight = parseFloat($('weight_txt').value);
+      var date   = $('date_txt').value;
+      // 値の正当性をチェックする
+      if (!date.match(/^\d+\/\d+\/\d+$/)) {
+        alert('日付を正しく入力してください。'); return;
+      }
+      if (isNaN(height) || height < 50) {
+        alert('身長を正しく入力してください。'); return;
+      }
+      if (isNaN(weight) || weight < 30) {
+        alert('体重を正しく入力してください。'); return;
+      }
+      // 身長の設定はすぐに保存
+      localStorage.setItem(KEY_HEIGHT, height);
+      // 記録に追記する
+      var date_ary = date.split("/");
+      var y = date_ary[0], m = date_ary[1], d = date_ary[2];
+      mchain.transaction()
+        .select(
+          "logs", {'year':y, 'month':m, 'date':d},
+          function(trans, rs) {
+            if (rs.rows.length > 0) { // 値を更新する
+              mchain.update("logs",
+                {'weight': weight, 'year':y, 'month':m, 'date':d},
+                {'year':y, 'month':m, 'date':d}
+              ).commit();
+            } else { // 新たに挿入する
+              mchain.insert("logs",
+                {'weight': weight, 'year':y, 'month':m, 'date':d}
+              ).commit();
+            }
+          }
+        ).commit(showHistorySection,showHistorySection);
+    }
+    // 体重を表示する
+    function showHistoryData() {
+      console.log("showHistoryData");
+      var s = "";
+      mchain.transaction().executeSql(
+        "SELECT * FROM logs ORDER BY year DESC, month DESC, date DESC" +
+        " LIMIT ?",[30],
+        function(trans, rs) {
+          if (rs.rows.length == 0) {
+            $('info_div').innerHTML = 'なし'; return;
+          }
+          for (var i = 0; i < rs.rows.length; i++) {
+            var r = rs.rows.item(i);
+            if (i == 0) { showBMI(r); }
+            s += "<div class='bline'>";
+            s += r.year + "/" + r.month + "/" + r.date + " : ";
+            s += r.weight + "kg</div>";
+          }
+          $('info_div').innerHTML = s;
+        }
+      ).commit();
+    }
+    function showBMI(r) {
+      var height_cm = localStorage.getItem(KEY_HEIGHT);
+      var h = height_cm / 100;
+      var w = r.weight;
+      var bmi = w / (h * h);
+      var ave = 22 * (h * h);
+      var per = Math.floor(w / ave * 100);
+      var flag = "標準";
+      if (bmi < 18.5) { flag = "痩せ"; }
+      else if (25 <= bmi && bmi < 30) { flag = "太目"; }
+      else if (30 <= bmi) { flag = "肥満"; }
+      bmi = Math.floor(bmi * 100) / 100;
+      var s = "BMI: " + bmi + " → " + flag;
+      s += " (肥満度: " + per + "%)";
+      $('bmi_div').innerHTML = s;
+    }
+  </script>
+</body></html>

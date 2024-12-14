@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+  <script type="text/javascript">
+    function $(id) { return document.getElementById(id); }
+    var audio = new Audio("test.mp3");
+    audio.addEventListener("timeupdate", function(e) {
+      $("info").innerHTML = audio.currentTime + "/" + audio.duration;
+    });
+    // 音量を相対的に変更する
+    function changeVolume(v) {
+      var new_v = audio.volume + v;
+      if (0 <= new_v && new_v <= 1.0) {
+        audio.volume = new_v;
+      }
+    }
+  </script>
+</head><body>
+  <h3>HTML5オーディオ再生</h3>
+  <div id="info"></div>
+  <div id="player_div">
+    <input type="button" value="再生" onclick="audio.play()" />
+    <input type="button" value="停止" onclick="audio.pause()" />
+    <input type="button" value="最初から再生"
+     onclick="audio.currentTime=0; audio.play()" /><br />
+    <input type="button" value="音量小さく"
+     onclick="changeVolume(-0.2)" />
+    <input type="button" value="音量大きく"
+     onclick="changeVolume(0.2)" />
+  </div>
+</body></html>

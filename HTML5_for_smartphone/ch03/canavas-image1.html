@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<canvas id="a_canvas" width="300" height="300"></canvas>
+<script type="text/javascript">
+  // コンテキストを取得
+  var a_canvas = document.getElementById("a_canvas");
+  var context = a_canvas.getContext("2d");
+  // 枠を描画
+  context.strokeStyle = "#ff0000";
+  context.strokeRect(5,5,260,260);
+  context.stroke();
+  // (*1) 画像の読み込み
+  var image = new Image();
+  image.src = "sample.jpg";
+  image.onload = function () {
+    // (*2) 画像を Canvas に描画する
+    context.drawImage(image, 10,10,187,250);
+  };
+</script>
+</body></html>

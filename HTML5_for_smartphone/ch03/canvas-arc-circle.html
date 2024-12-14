@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<canvas id="a_canvas" width="300" height="300"></canvas>
+<script type="text/javascript">
+  // コンテキストを取得
+  var a_canvas = document.getElementById("a_canvas");
+  var context = a_canvas.getContext("2d");
+  // 円を描画
+  var x = 150;
+  var y = 150;
+  var r = 100;
+  context.beginPath();
+  context.arc(x, y, r, 0, 2*Math.PI, true);
+  context.fillStyle = "#0000ff";
+  context.fill();
+</script>
+</body></html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<h1>ローカル自動保存メモ</h1>
+<div id="msg_div"></div>
+<textarea id="main_txt" cols="80" rows="30"></textarea>
+<!-- Android 1.6対策 -->
+<script type="text/javascript" src="gear5-0.3.js"></script>
+<script type="text/javascript">
+  // textarea のオブジェクトを取得
+  var main_txt = document.getElementById("main_txt");
+  var msg_div = document.getElementById("msg_div");
+  // 読み込み時のイベントを設定
+  window.onload = function() {
+    // メモの読み込み
+    var body = localStorage.getItem("memo");
+    if (body != null) {
+      main_txt.value = body;
+    }
+  };
+  // テキストの文章を変更した時のイベントを設定
+  main_txt.onchange = function() {
+    // メモの自動保存
+    localStorage.setItem("memo", main_txt.value);
+    msg_div.innerHTML = "saved " + new Date().toString();
+  };
+</script>
+</body></html>

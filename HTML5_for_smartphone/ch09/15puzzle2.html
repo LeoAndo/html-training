@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+     content="width=320, user-scalable=no" />
+  <style> * { margin:0; padding:0; position: absolute; }
+    #title  {
+      background-color: blue; color: white;
+      padding:3px; font-size:14px;
+      width:314px; height: 14px;
+    }
+    #game_canvas {
+      top:20px; width:320px; height:320px;
+    }
+  </style>
+</head><body>
+<div id="title">15puzzle</div>
+<canvas id="game_canvas" width="320" height="320"></canvas>
+<script type="text/javascript">
+  // 設定
+  var main_image = "kujira-mini.png";
+  var panels = [];
+  var cell_w = 320 / 4;
+  var cell_h = 320 / 4;
+  var image_per = 1, image_w = 320; // 画像の拡大率と基本となる幅
+  var pos_array = [[-1,0],[1,0],[0,-1],[0,1]]; // 上下左右の座標
+  // Canvasのコンテキストを取得する
+  var canvas = document.getElementById("game_canvas");
+  var con = canvas.getContext("2d");
+  // 画像の読み込み
+  var image = new Image();
+  image.src = main_image;
+  image.onload = function() {
+    if (image.width < 320 || image.height < 320) {
+      var per_w = image.width / 320;
+      var per_h = image.height / 320;
+      image_per = per_h;
+      image_w = image.height;
+      if (per_w < per_h) {
+        image_per = per_w;
+        image_w = image.width;
+      }
+    }
+    con.drawImage(image, 0, 0, image_w, image_w, 0, 0, 320, 320);
+    setTimeout(shufflePanel, 3000);
+  }
+  // パネルをシャッフルする
+  function shufflePanel() {
+    // パネルを初期化
+    for (var i = 0; i < 16; i++) {
+      panels[i] = i;
+    }
+    // シャッフル
+    for (var j = 0; j < 16; j++) {
+      var r = Math.floor(Math.random() * 16);
+      var tmp = panels[r];
+      panels[r] = panels[j];
+      panels[j] = tmp;
+    }
+    drawPanels();
+  }
+  // パネルを番号に応じて描画する
+  function drawPanels() {
+    for (var i = 0; i < 16; i++) {
+      var no = panels[i];
+      var pcol = no % 4;
+      var prow = Math.floor(no / 4);
+      var px = pcol * cell_w;
+      var py = prow * cell_h;
+      var tx = (i % 4) * cell_w;
+      var ty = Math.floor(i / 4) * cell_h;
+      if (no == 15) {
+        // 穴を表示する
+        con.beginPath();
+        con.fillStyle = "#cccccc";
+        con.fillRect(tx, ty, cell_w, cell_h);
+      } else {
+        // 画像を切り取って表示する
+        con.drawImage(image,
+          px * image_per, py * image_per, image_w / 4, image_w / 4,
+          tx, ty, cell_w, cell_w);
+      }
+      // 枠を描画する
+      con.beginPath();
+      con.moveTo(tx + cell_w, ty);
+      con.lineTo(tx, ty);
+      con.lineTo(tx, ty + cell_h);
+      con.strokeStyle = "#999999";
+      con.stroke();
+    }
+  }
+  // ユーザーのタッチイベントに反応する
+  canvas.ontouchstart = function(e) { // for iPhone
+    if (e.touches.length > 0) {
+      var t = e.touches[0];
+      checkPanelXY(t.clientX, t.clientY);
+    }
+    e.preventDefault();
+  };
+  canvas.onmousedown = function(e) { // for PC
+    checkPanelXY(e.clientX, e.clientY);
+  };
+  function checkPanelXY(sx, sy) {
+    // タップされたパネルを取得する
+    var col = Math.floor(sx / cell_w);
+    var row = Math.floor((sy-20)  / cell_h);
+    var no = row * 4 + col;
+    // 穴の上なら何もしない
+    if (panels[no] == 15) { return; }
+    // 穴に隣接しているか確認
+    for (var i = 0; i < pos_array.length; i++) {
+      var row2 = pos_array[i][0] + row;
+      var col2 = pos_array[i][1] + col;
+      var check = getPanelNo(row2, col2);
+      if (check == 15) {
+        swapPanel(row, col, row2, col2);
+      }
+    }
+  };
+  // 行(row)と列(col)からパネル番号を返す
+  function getPanelNo(row, col) {
+    // 範囲外なら -1 を返す
+    if (col < 0 || row < 0 || col >= 4 || row >= 4) {
+      return -1;
+    }
+    return panels[row * 4 + col];
+  }
+  // パネルを入れ替える
+  function swapPanel(row1, col1, row2, col2) {
+    var index1 = row1 * 4 + col1;
+    var index2 = row2 * 4 + col2;
+    var tmp = panels[index1];
+    panels[index1] = panels[index2];
+    panels[index2] = tmp;
+    drawPanels();
+  }
+</script>
+</body></html>

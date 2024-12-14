@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+#SizeSelector span { 
+    background-color: blue;
+    color:white; 
+    padding:4px;
+}
+</style>
+</head><body>
+<h1>文字サイズの選択</h1>
+<div id="SizeSelector">
+  <span id="fontL" style="font-size:32px">大</span>
+  <span id="fontM" style="font-size:24px">中</span>
+  <span id="fontS" style="font-size:12px">小</span>
+</div>
+<h2>サンプル</h2>
+<div>ゴーシュは町の活動写真館でセロを弾く係りでした。けれどもあんまり上手でないという評判でした。上手でないどころではなく実は仲間の楽手のなかではいちばん下手でしたから、いつでも楽長にいじめられるのでした。</div>
+
+<!-- Android 1.6対策 -->
+<script type="text/javascript" src="gear5-0.3.js"></script>
+<script type="text/javascript">
+  // getElementById のショートカット関数を定義
+  function $(id) { return document.getElementById(id); }
+  // 各種イベントを設定
+  window.addEventListener("load", window_loadHandler, false);
+  $("fontL").addEventListener("click", fontL_clickHandler, false);
+  $("fontM").addEventListener("click", fontM_clickHandler, false);
+  $("fontS").addEventListener("click", fontS_clickHandler, false);
+  // イベントハンドラ
+  function window_loadHandler() {
+    var fontsize = localStorage.getItem("font-size");
+    if (fontsize != null) {
+       setFontSize(fontsize);
+    }
+  }
+  function fontL_clickHandler() { setFontSize("2em"); }
+  function fontM_clickHandler() { setFontSize("1em"); }
+  function fontS_clickHandler() { setFontSize("0.5em"); }
+  // フォントのサイズを変えるメソッド
+  function setFontSize(font_size) {
+    // Webストレージに保存
+    try {
+      localStorage.removeItem("font-size");
+      localStorage.setItem("font-size", font_size);
+    } catch (e) { }
+    document.body.style.fontSize = font_size;
+  }
+</script>
+</body></html>

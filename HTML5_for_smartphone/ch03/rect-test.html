@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<canvas id="a_canvas" width="300" height="300"></canvas>
+<script type="text/javascript">
+  var canvas = document.getElementById("a_canvas");
+  var ctx = canvas.getContext("2d");
+  // 描画
+  ctx.fillStyle   = "#ff0000";
+  ctx.strokeStyle = "#0000ff";
+  ctx.lineWidth = 3;
+  ctx.rect(20,20,240,240);
+  ctx.fill();  // 塗りつぶす
+  ctx.stroke();// 枠線を引く
+</script>
+</body></html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<h1>TODOメモ</h1>
+<!-- 新規追加ボックス -->
+<div id="new_div">
+  <input id="new_txt" type="text" value="" style="width:250px" size="40"/>
+  <br /><input id="add_btn" type="button" value="追加" />
+</div>
+<!-- 項目一覧 -->
+<div id="items_div"></div>
+<!-- 項目の操作パネル -->
+<div id="control_div">
+  <input id="done_btn" type="button" value="削除"/>
+</div>
+
+<!-- Android 1.6対策 -->
+<script type="text/javascript" src="gear5-0.3.js"></script>
+<script type="text/javascript">
+  // 便利な関数の定義
+  function $(id) { return document.getElementById(id); }
+  // 変数の初期化
+  var todo_div = $("todo_div");
+  var db;
+  var cbItems = [];
+  // ドキュメント読み込み時のイベントを設定
+  window.onload = function() {
+    if (window.openDatabase == undefined) {
+      alert("Web Database に対応していません!!");
+      return;
+    }
+    // データベースを開く
+    db = window.openDatabase("todo2.db", "1.0", "TODO", 1024 * 1024);
+    db.transaction(function(tr) {
+      // テーブルがなければ作る
+      var query  = 
+        "CREATE TABLE IF NOT EXISTS todo_tbl(" +
+        "  todo_id INTEGER  PRIMARY KEY,     " +
+        "  memo    TEXT NOT NULL             " +
+        ")";
+      tr.executeSql(query, [], loadItems);
+    });
+  };
+  // アイテムの読み込み実行
+  function loadItems() {
+    db.transaction(function(tr) {
+      var query = "SELECT * FROM todo_tbl";
+      tr.executeSql(query, [], loadItems_onResult);
+    });
+  }
+  // アイテムが読み込まれた時のイベント
+  function loadItems_onResult(tr, rs) {
+    // 全ての子ノードを削除
+    while(items_div.hasChildNodes()) {
+      items_div.removeChild(items_div.lastChild);
+    }
+    cbItems = [];
+    // チェックボックスを作成する
+    for (var i = 0; i < rs.rows.length; i++) {
+      var row = rs.rows.item(i);
+      var todo_id = row.todo_id;
+      var memo    = row.memo;
+      // チェックボックスを追加
+      var cb = document.createElement("input"); // チェックを作成
+      cb.type  = "checkbox";
+      cb.value = todo_id;
+      cbItems.push(cb);
+      var label = document.createElement("span"); // ラベル作成
+      label.innerHTML = memo;
+      var line = document.createElement("div"); // 一行作成
+      line.appendChild(cb);    // チェックを追加
+      line.appendChild(label); // ラベルを追加
+      items_div.appendChild(line); // 項目一覧に line を追加
+    }
+  }
+  // [追加]ボタンを押した時のイベント
+  $("add_btn").onclick = function() {
+    var text = $("new_txt").value;
+    $("new_txt").value = "";
+    db.transaction(function(tr) {
+      var query = "INSERT INTO todo_tbl(memo)VALUES(?)";
+      tr.executeSql(query,[text],loadItems);
+    });
+  };
+  // [削除]ボタンを押した時のイベント
+  $("done_btn").onclick = function() {
+    db.transaction(function(tr) {
+      for (var i in cbItems) {
+        var cb = cbItems[i];
+        if (!cb.checked) continue;
+        var query = "DELETE FROM todo_tbl WHERE todo_id=?";
+        tr.executeSql(query,[cb.value]);
+      }
+    }, function(){ alert('削除失敗') }, loadItems);
+  };
+</script>
+</body></html>

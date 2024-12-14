@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <title>美味しいお店記録アプリ</title>
+  <meta name="viewport"
+        content="width=device-width,user-scalable=yes,
+                   initial-scale=1.0,maximum-scale=3.0" />
+</head><body>
+<h3>美味しいお店記録アプリ</h3>
+<div id="new_div">
+  店名:<input id="name_txt" type="text" value="" size="20" /><br />
+  <input id="save_btn" type="button" value="記録" />
+</div>
+<div id="list_div">なし</div>
+<!-- Android 1.6対策 -->
+<script type="text/javascript" src="gear5-0.3.js"></script>
+<script type="text/javascript">
+  // 便利関数
+  function $(id) { return document.getElementById(id); }
+  // 初期化処理
+  var items = [];
+  window.onload = function() {
+    if (window.localStorage    == undefined &&
+        navigator.geolocation  == undefined) {
+        alert("HTML5未対応端末です。"); return;
+    }
+    // 既存リストを表示
+    var list = localStorage.getItem("shoplist");
+    if (list == null) {
+      list = "";
+    } else {
+      items = list.split("\n");
+      showItems();
+    }
+    // 記録ボタンを押した時のイベントを設定
+    $("save_btn").onclick = save_btn_clickHandler;
+  };
+  // お店一覧を表示
+  function showItems() {
+    var map_uri = "http://maps.google.co.jp/?q=";
+    var html = "<ul>";
+    for (var i in items) {
+      var data = items[i].split("\t");// タブ区切りデータを分解
+      var name = data[0];
+      var lat  = data[1];
+      var lon  = data[2];
+      var link = "<a href='"+map_uri+lat+","+lon+"'>"+name+"</a>";
+      html += "<li>"+link+"</li>";
+    }
+    html += "<li><a href='http://maps.google.co.jp/?q=35.457100, 139.632996'>*test*</a>";
+    html += "</ul>";
+    $("list_div").innerHTML = html;
+  }
+  // 保存ボタンを押した時のイベント
+  function save_btn_clickHandler() {
+    if ($("name_txt").value == "") {
+      alert("店名を入力してください"); return;
+    }
+    // 位置情報の取得
+    navigator.geolocation.getCurrentPosition(
+      successCallback,
+      errorCallback);
+    $("save_btn").value = "現在位置情報取得中";
+  }
+  // 成功したとき
+  function successCallback(position) {
+    var lat = position.coords.latitude;
+    var lon = position.coords.longitude;
+    var name_txt = $("name_txt");
+    // 店名＋位置情報を保存
+    var item = name_txt.value + "\t" + lat + "\t" + lon;
+    items.push(item);
+    var list = items.join("\n");
+    try {
+      localStorage.removeItem("shoplist");
+      localStorage.setItem("shoplist", list);
+    } catch (err) {
+      alert("保存失敗");
+    }
+    $("save_btn").value = "記録";
+    name_txt.value = "";
+    showItems();
+  }
+  // 失敗したとき
+  function errorCallback(err) {
+    alert("失敗("+err.code+")"+err.message);
+    $("save_btn").value = "記録";
+  }
+</script>
+</body></html>

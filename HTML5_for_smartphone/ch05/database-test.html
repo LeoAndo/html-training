@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<button onclick="showValues()">値を表示</button>
+<script type="text/javascript">
+
+  var db;
+  window.onload = function() {
+    if (window.openDatabase == undefined) {
+      alert("Web Databaseに対応していません!!");
+      return;
+    }
+    //(*1)データベースを開く
+    db = window.openDatabase("testdb", "1.0", "sample", 1024*1024);
+    //(*2)トランザクションを開始する
+    db.transaction(function(tx) {
+      //(*3)SQLを実行する
+      // テーブルがなければ作成する
+      tx.executeSql("create table if not exists time_tbl(sec,str)");
+      // テーブルに現在時刻を挿入する
+      var sec = new Date().getTime();
+      var str = new Date().toString();
+      tx.executeSql("insert into time_tbl(sec,str)values(?,?)",[sec,str]);
+    });
+  };
+  function showValues() {
+    db.transaction(function(tx) {
+      //(*3)SQLを実行する...現在までの情報を取得する
+      tx.executeSql("select * from time_tbl",[],
+        function(tx, rs){
+          //(*4) 実行結果を取得する
+          for (var i = 0; i < rs.rows.length; i++) {
+            var row = rs.rows.item(i);
+            document.write(row.str + "<br/>");
+          }
+        }
+      );
+    });
+  }
+</script>
+</body></html>

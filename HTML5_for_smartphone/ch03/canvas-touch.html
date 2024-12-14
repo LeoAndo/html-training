@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=320, user-scalable=no" />
+</head><body>
+<canvas id="canvas" width="300" height="300"></canvas>
+<script type="text/javascript">
+  // 描画用のコンテキストを取得
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+  // Canvasにイベントを設定
+  canvas.onmousedown = function (event) {
+    // タッチした座標を取得
+    var x = event.x;
+    var y = event.y;
+    var r = Math.random() * 10 + 5;
+    // パスの指定
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + r);
+    ctx.lineTo(x + r, y + r);
+    ctx.lineTo(x, y);
+    // 描画
+    ctx.strokeStyle = "red";
+    ctx.stroke();  
+  };
+</script>
+</body></html>

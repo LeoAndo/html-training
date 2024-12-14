@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8">
+<body>
+<h1>関西弁コンバーター</h1>
+<div id="dropbox"
+ style="width:300px; height:100px; padding:10px;
+        background-color:blue; color:white; font-size:24px;">
+  ここに、テキストファイル(UTF-8)を、
+  ドラッグ&ドロップしてください！
+</div><br />
+<textarea id="preview" cols="50" rows="10"></textarea>
+<script type="text/javascript">
+  function $(id) { return document.getElementById(id); }
+  var dropbox = $("dropbox");
+  // ドラッグ＆ドロップの指定
+  window.onload = function() {
+    window.addEventListener("dragenter", dragenter, true);
+    window.addEventListener("dragleave", dragleave, true);
+    dropbox.addEventListener("dragover", dragover, true);
+    dropbox.addEventListener("drop", drop, true);
+  };
+  function dragenter(e) {
+    dropbox.style.backgroundColor = 'red';
+  }
+  function dragleave(e) {
+    dropbox.style.backgroundColor = 'blue';
+  }
+  function dragover(e) {
+    e.preventDefault();
+  }
+  function drop(e) {
+    var dt = e.dataTransfer;
+    var files = dt.files;
+    e.preventDefault();
+    if (files.length == 0) { return false; }
+    return convert(files[0]);
+  }
+  // 変換処理
+  function convert(file) {
+    if (!file.type.match(/text.*/)) {
+      alert('テキストファイルをドロップしてください。');
+      return false;
+    }
+    var reader = new FileReader();
+    reader.onloadend = function() {
+      var s = reader.result;
+      s = s.replace(/のです/g,"んや");
+      s = s.replace(/です/g,"なんや");
+      s = s.replace(/だから/g,"そやから");
+      s = s.replace(/とても/g,"めっちゃ");
+      $('preview').innerHTML = reader.result + "---\n" + s;
+    };
+    reader.readAsText(file);
+    return true;
+  }
+</script>
+</body>
+</html>

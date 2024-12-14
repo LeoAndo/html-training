@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<input id="input_txt" type="text" size="14" />
+<input type="button" value="送信" onclick="sendLog()" />
+<div id="msg"></div>
+<script type="text/javascript">
+var ws;
+var host = "ws://localhost:12345/websocket/echoserver.php";
+window.onload = function() {
+  if (window.WebSocket == undefined) {
+    alert("WebSocketが使えません"); return;
+  }
+  try {
+    ws = new WebSocket(host);
+    ws.onopen    = function(event) { log('接続しました'); };
+    ws.onmessage = function(event) { log('受信:' + event.data); };
+    ws.onclose   = function(event) { log('切断しました。'); };
+  } catch (e) {
+    alert(e);
+  }
+  function log(str) {
+    var msg = document.getElementById("msg");
+    msg.innerHTML = str + "<br/>" + msg.innerHTML;
+  }
+};
+function sendLog() {
+  var input_txt = document.getElementById("input_txt");
+  ws.send(input_txt.value);
+}
+</script>
+</body></html>

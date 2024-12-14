@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+</head><body style="color:white;">
+<h1>背景色の選択</h1>
+<div id="ColorSelector">
+  <span id="colorR" style="background-color:red;">赤</span>
+  <span id="colorG" style="background-color:green;">緑</span>
+  <span id="colorB" style="background-color:blue;">青</span>
+</div>
+<!-- Android 1.6対策 -->
+<script type="text/javascript" src="gear5-0.3.js"></script>
+<script type="text/javascript">
+  // getElementById のショートカット関数を定義
+  function $(id) { return document.getElementById(id); }
+  // イベントを設定
+  $("colorR").onclick = function(){ setColor("red"); }
+  $("colorG").onclick = function(){ setColor("green"); }
+  $("colorB").onclick = function(){ setColor("blue"); }
+  window.onload = function() {
+    var color = localStorage.getItem("color");
+    if (color == null) { color = "red"; }
+    setColor(color);
+  }
+  // 背景色を変える
+  function setColor(color) {
+    try { // 保存
+      localStorage.removeItem("color");
+      localStorage.setItem("color", color);
+    } catch (e) { }
+    document.body.style.backgroundColor = color;
+  }
+</script>
+</body></html>
